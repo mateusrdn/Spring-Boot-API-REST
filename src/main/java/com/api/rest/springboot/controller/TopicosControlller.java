@@ -21,8 +21,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.api.rest.springboot.controller.dto.DetalhesDoTopicoDto;
 import com.api.rest.springboot.controller.dto.TopicoDto;
-import com.api.rest.springboot.form.AtualizacaoTopicoForm;
-import com.api.rest.springboot.form.TopicoForm;
+import com.api.rest.springboot.controller.form.AtualizacaoTopicoForm;
+import com.api.rest.springboot.controller.form.TopicoForm;
 import com.api.rest.springboot.model.Topico;
 import com.api.rest.springboot.repository.CursoRepository;
 import com.api.rest.springboot.repository.TopicoRepository;
@@ -32,61 +32,63 @@ import com.api.rest.springboot.repository.TopicoRepository;
 public class TopicosControlller {
 
 	@Autowired
-	private TopicoRepository repository;
-
-	private CursoRepository resositoryCurso;
-
+	private TopicoRepository topicoRepository;
+	
+	@Autowired
+	private CursoRepository cursoRepository;
+	
 	@GetMapping
-	public List<TopicoDto> list(String nomeCurso) {
-		if (nomeCurso != null) {
-			List<Topico> topicos = (List<Topico>) repository.findAll();
+	public List<TopicoDto> lista(String nomeCurso) {
+		if (nomeCurso == null) {
+			List<Topico> topicos = topicoRepository.findAll();
 			return TopicoDto.converter(topicos);
 		} else {
-			List<Topico> topicos = (List<Topico>) repository.findByCursoNome(nomeCurso);
+			List<Topico> topicos = topicoRepository.findByCursoNome(nomeCurso);
 			return TopicoDto.converter(topicos);
 		}
-
 	}
-
+	
 	@PostMapping
 	@Transactional
 	public ResponseEntity<TopicoDto> cadastrar(@RequestBody @Valid TopicoForm form, UriComponentsBuilder uriBuilder) {
-		Topico topico = form.converter(resositoryCurso);
-		repository.save(topico);
-
+		Topico topico = form.converter(cursoRepository);
+		topicoRepository.save(topico);
+		
 		URI uri = uriBuilder.path("/topicos/{id}").buildAndExpand(topico.getId()).toUri();
 		return ResponseEntity.created(uri).body(new TopicoDto(topico));
 	}
-
+	
 	@GetMapping("/{id}")
 	public ResponseEntity<DetalhesDoTopicoDto> detalhar(@PathVariable Long id) {
-		Optional<Topico> topico = repository.findById(id);
+		Optional<Topico> topico = topicoRepository.findById(id);
 		if (topico.isPresent()) {
 			return ResponseEntity.ok(new DetalhesDoTopicoDto(topico.get()));
 		}
+		
 		return ResponseEntity.notFound().build();
 	}
-
+	
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<TopicoDto> atualizar(@PathVariable Long id, @RequestBody @Valid AtualizacaoTopicoForm form) {
-
-		Optional<Topico> optional = repository.findById(id);
+		Optional<Topico> optional = topicoRepository.findById(id);
 		if (optional.isPresent()) {
-			Topico topico = form.atualizar(id, repository);
+			Topico topico = form.atualizar(id, topicoRepository);
 			return ResponseEntity.ok(new TopicoDto(topico));
 		}
+		
 		return ResponseEntity.notFound().build();
 	}
-
+	
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<?> remover(Long id) {
-		Optional<Topico> optional = repository.findById(id);
+	public ResponseEntity<?> remover(@PathVariable Long id) {
+		Optional<Topico> optional = topicoRepository.findById(id);
 		if (optional.isPresent()) {
-			repository.deleteById(id);
+			topicoRepository.deleteById(id);
 			return ResponseEntity.ok().build();
 		}
+		
 		return ResponseEntity.notFound().build();
 	}
 }

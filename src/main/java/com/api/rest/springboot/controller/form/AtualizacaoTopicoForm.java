@@ -1,4 +1,4 @@
-package com.api.rest.springboot.form;
+package com.api.rest.springboot.controller.form;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -13,7 +13,7 @@ public class AtualizacaoTopicoForm {
 	@NotNull @NotEmpty @Length(min = 5)
 	private String titulo;
 	
-	@NotNull @NotEmpty @Length(min = 5)
+	@NotNull @NotEmpty @Length(min = 10)
 	private String mensagem;
 
 	public String getTitulo() {
@@ -31,10 +31,10 @@ public class AtualizacaoTopicoForm {
 	public void setMensagem(String mensagem) {
 		this.mensagem = mensagem;
 	}
-	
-	public Topico atualizar(Long id, TopicoRepository repository) {
+
+	public Topico atualizar(Long id, TopicoRepository topicoRepository) {
+		Topico topico = topicoRepository.getOne(id);
 		
-		Topico topico = repository.getOne(id);
 		topico.setTitulo(this.titulo);
 		topico.setMensagem(this.mensagem);
 		

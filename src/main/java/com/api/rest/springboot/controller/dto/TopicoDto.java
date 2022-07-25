@@ -19,22 +19,25 @@ public class TopicoDto {
 		this.mensagem = topico.getMensagem();
 		this.dataCriacao = topico.getDataCriacao();
 	}
-	
+
 	public Long getId() {
 		return id;
 	}
+
 	public String getTitulo() {
 		return titulo;
 	}
+
 	public String getMensagem() {
 		return mensagem;
 	}
+
 	public LocalDateTime getDataCriacao() {
 		return dataCriacao;
 	}
-	
-	public static List<TopicoDto> converter(List<Topico> topico){
-		return topico.stream().map(TopicoDto::new).collect(Collectors.toList());
+
+	public static List<TopicoDto> converter(List<Topico> topicos) {
+		return topicos.stream().map(TopicoDto::new).collect(Collectors.toList());
 	}
 	
 }
