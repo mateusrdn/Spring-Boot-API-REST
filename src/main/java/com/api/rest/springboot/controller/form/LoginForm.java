@@ -25,8 +25,7 @@ public class LoginForm {
 
 	
 	public UsernamePasswordAuthenticationToken converter() {	
-		return new UsernamePasswordAuthenticationToken(email, senha);
-				
+		return new UsernamePasswordAuthenticationToken(email, senha);		
 	}
 	
 }
